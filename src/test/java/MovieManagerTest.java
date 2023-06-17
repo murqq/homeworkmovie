@@ -1,58 +1,63 @@
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MovieManagerTest {
-    private MovieManager manager;
 
-    @BeforeEach
-    public void setUp() {
-        manager = new MovieManager();
+    @Test
+    public void testDefaultLimit() {
+        MovieManager manager = new MovieManager();
+        manager.addMovie("Movie 1");
+        manager.addMovie("Movie 2");
+        manager.addMovie("Movie 3");
+        manager.addMovie("Movie 4");
+        manager.addMovie("Movie 5");
+
+        String[] expected = {"Movie 1", "Movie 2", "Movie 3", "Movie 4", "Movie 5",};
+        assertArrayEquals(expected, manager.findAll());
     }
 
     @Test
-    public void testAddMovie() {
-        manager.addMovie("Фильм 1");
-        manager.addMovie("Фильм 2");
-        List<String> movies = manager.findAllMovies();
-        assertEquals(2, movies.size());
-        assertArrayEquals(new String[]{"Фильм 1", "Фильм 2"}, movies.toArray());
+    public void testCustomLimit() {
+        MovieManager manager = new MovieManager(3);
+        manager.addMovie("Movie 1");
+        manager.addMovie("Movie 2");
+
+        String[] expected = {"Movie 2", "Movie 1"};
+        assertArrayEquals(expected, manager.findLastMovie());
+
+        manager.addMovie("Movie 3");
+
+        String[] expectedUpdated = {"Movie 3", "Movie 2", "Movie 1"};
+        assertArrayEquals(expectedUpdated, manager.findLastMovie());
+
+        manager.addMovie("Movie 4");
+
+        String[] expectedFull = {"Movie 4", "Movie 3", "Movie 2"};
+        assertArrayEquals(expectedFull, manager.findLastMovie());
     }
 
     @Test
-    public void testFindAllMovies() {
-        manager.addMovie("Фильм 1");
-        manager.addMovie("Фильм 2");
-        List<String> movies = manager.findAllMovies();
-        assertEquals(2, movies.size());
+    public void testFindAll() {
+        MovieManager manager = new MovieManager(10);
+        manager.addMovie("Movie 1");
+        manager.addMovie("Movie 2");
+        manager.addMovie("Movie 3");
+
+        String[] expected = {"Movie 1", "Movie 2", "Movie 3"};
+        assertArrayEquals(expected, manager.findAll());
     }
 
     @Test
-    public void testFindLastMovies_DefaultLimit() {
-        manager.addMovie("Фильм 1");
-        manager.addMovie("Фильм 2");
-        manager.addMovie("Фильм 3");
-        manager.addMovie("Фильм 4");
-        manager.addMovie("Фильм 5");
-        manager.addMovie("Фильм 6");
-        List<String> lastMovies = manager.findLastMovies();
-        assertEquals(5, lastMovies.size());
-        assertArrayEquals(new String[]{"Фильм 6", "Фильм 5", "Фильм 4", "Фильм 3", "Фильм 2"}, lastMovies.toArray());
-    }
+    public void testFindLast() {
+        MovieManager manager = new MovieManager(5);
+        manager.addMovie("Movie 1");
+        manager.addMovie("Movie 2");
+        manager.addMovie("Movie 3");
+        manager.addMovie("Movie 4");
+        manager.addMovie("Movie 5");
 
-    @Test
-    public void testFindLastMovies_CustomLimit() {
-        manager = new MovieManager(3);
-        manager.addMovie("Фильм 1");
-        manager.addMovie("Фильм 2");
-        manager.addMovie("Фильм 3");
-        manager.addMovie("Фильм 4");
-        List<String> lastMovies = manager.findLastMovies();
-        assertEquals(3, lastMovies.size());
-        assertArrayEquals(new String[]{"Фильм 4", "Фильм 3", "Фильм 2"}, lastMovies.toArray());
+        String[] expected = {"Movie 5", "Movie 4", "Movie 3", "Movie 2", "Movie 1"};
+        assertArrayEquals(expected, manager.findLastMovie());
     }
 }
